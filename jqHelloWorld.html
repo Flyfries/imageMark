@@ -111,6 +111,9 @@ html,body{
 #start{
 	margin-left: 60px;
 }
+#clearAll{
+	margin-left: 220px;
+}
 .point{
 	/*border-radius: 50px;*/
 	position: absolute;
@@ -174,6 +177,7 @@ html,body{
 
 		<button id ="clear"   > 清除标记点</button>
 		<button id ="submit"   > 确认提交</button>
+		<button id ="clearAll"   > 清空数据</button>
 	</div>
 	
 	<div>
@@ -206,11 +210,16 @@ $(function(){
 	var record = "";
 	var count = 0;
 	var start = false;
-	var data = "";
+ 
 	var fileName = "";
 	var oX, oY;
 	var rectangle;
 	var listCount ;
+
+	$("#store").val(window.localStorage["data"]);
+	$("#store").animate({scrollTop:$("#store")[0].scrollHeight - $("#store").height()},1000) ;
+
+
 	$("#start").click(function(){
 		start = true;
 	});
@@ -222,10 +231,17 @@ $(function(){
 		$(".point").remove();
 		$(".rectangle").remove();
 	});
-
+	$("#clearAll").click(function(){
+		$("#store").val("");
+		window.localStorage["data"] = "";
+	});
 	$("#submit").click(function(){
+	 
 		if( !(count%2) ){
-			data += $("#mark").val()+ "\n"; 
+			if (!(window.localStorage["data"])) {
+				window.localStorage["data"] = $("#mark").val()+ "\n"; 
+			}
+			window.localStorage["data"] += $("#mark").val()+ "\n"; 
 			$("#mark").val("");
 			record = "";
 			count = 0;
@@ -236,11 +252,14 @@ $(function(){
 			else{
 				start = false;
 			}
-			$("#store").val(data);
+			$("#store").val(window.localStorage["data"]);
 
 			$(".point").remove();
 			$(".rectangle").remove();
 
+
+			$("#store").animate({scrollTop:$("#store")[0].scrollHeight - $("#store").height()},1000) ;
+			$("#nextImg").click();
 		}
 		else {
 			alert("亲，还有一个框没画完呢");
@@ -325,8 +344,8 @@ $(function(){
 
 
 	$('#preview').mousemove(function(e){
-		// $('.mousePosition').html("X Position:" + (+(e.pageX )- 200)+ "<br>   Y Position:" + (+(e.pageY )- 120));
-		$('.mousePosition').html($("fileList").height());
+		$('.mousePosition').html("X Position:" + (+(e.pageX )- 200)+ "<br>   Y Position:" + (+(e.pageY )- 120));
+		// $('.mousePosition').html($("fileList").height());
 	}).click(function(e){
 		if(start){
 			 
